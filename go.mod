@@ -1,3 +1,3 @@
-module div1
+module go-reloaded
 
 go 1.19
