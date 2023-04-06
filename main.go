@@ -4,18 +4,142 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strconv"
 	"strings"
+	"strconv"
 )
+func spaceaposs(s string) string{
+	tab:=[]rune(s)
+	tab1:=[]rune{}
 
-func ToUpper(s string) string {
-	a := []rune(s)
-	for i, v := range a {
-		if v >= 'a' && v <= 'z' {
-			a[i] = a[i] - 32
+	for i:=0; i<len(tab); i++{
+		if i==0 && tab[i]==39{
+			tab1=append(tab1, tab[i])
+			tab1=append(tab1, ' ')
+		}else{
+		if i< len(tab)-2 && i>0 && tab[i+1]==39 && tab[i]!=' ' && tab[i+2]==' '{
+			tab1=append(tab1, tab[i])
+			tab1=append(tab1, ' ')
+		}else if i< len(tab)-1 && i>0 && tab[i]==39 && tab[i+1]!=' ' && tab[i-1]==' '{
+			tab1=append(tab1, tab[i])
+			tab1=append(tab1, ' ')
+		}else{
+			tab1=append(tab1, tab[i])
+		}
 		}
 	}
-	return string(a)
+	return string(tab1)
+}
+func double(s string) string{
+	tab:=[]rune(s)
+	tab1:=[]rune{}
+
+	for i:=0; i<len(tab); i++{
+		if i>0 && tab[i]==' ' && tab[i-1]==' '{
+			continue
+		}else{
+			tab1=append(tab1, tab[i])
+		}
+	}
+	return string(tab1)
+}
+
+func spaceapoint(s string) string{
+	tab:=[]rune(s)
+	tab1:=[]rune{}
+
+	for i:=0; i<len(tab); i++{
+		if i<len(tab)-1 && (tab[i] == '.' || tab[i] == ',' || tab[i] == ';' || tab[i] == ':' || tab[i] == '!' || tab[i] == '?' ) && tab[i+1]!=' '{
+			tab1=append(tab1, tab[i])
+			tab1=append(tab1, ' ')
+		}else{
+			tab1=append(tab1, tab[i])
+		}
+	}
+	return string(tab1)
+}
+func supspace(s string)string{
+	t:=[]rune(s)
+	t1:=[]rune{}
+	for i:=0; i<len(t); i++{
+		if i==1 && t[0]==' ' && t[i] == 39{
+			continue
+		}
+		if i==1 && t[0]==39 && t[i] ==' ' {
+			continue
+		}
+		if i>0 && i<len(t)-1 && t[i]==' ' && (t[i+1] == '.' || t[i+1] == ',' || t[i+1] == ';' || t[i+1] == ':' || t[i+1] == '!' || t[i+1] == '?' ){
+			continue
+		}else{
+			t1=append(t1, t[i])
+		}
+	}
+	return string(t1)
+}
+func SeparePonctuation(s string, index int , t []string){
+	tab:=[]rune(s)
+	tabponctuation:=[]rune{}
+	reste:=[]rune{}
+	ind:=0
+	for i:=0; i<len(tab); i++{
+		if tab[i]==',' || tab[i]==';' || tab[i]=='!' || tab[i]=='?' || tab[i]=='.'|| tab[i]==':'{
+			tabponctuation=append(tabponctuation, tab[i])
+			ind++
+		}else{
+			break
+		}
+	}
+	for j:=ind; j<len(tab); j++{
+		reste=append(reste, tab[j])
+	}
+	
+	t[index-1]+=string(tabponctuation)
+	t[index]=string(reste)
+}
+
+func Ponctuat3(S string, indexe int, result []string) {
+	get := []rune(S)
+	put1 := []rune{}
+	put2 := []rune{}
+	c := 0
+	for i := 0; i < len(get)-1; i++ {
+		put1 = append(put1, get[i])
+		c++
+		if get[i] == '.' || get[i] == ',' || get[i] == ';' || get[i] == ':' || get[i] == '!' || get[i] == '?' || get[i]==':'{
+			if get[i+1] == '.' || get[i+1] == ',' || get[i+1] == ';' || get[i+1] == ':' || get[i+1] == '!' || get[i+1] == '?' {
+				continue
+			} else {
+				break
+			}
+		}
+	}
+	for j := c; j < len(get); j++ {
+		put2 = append(put2, get[j])
+	}
+	result[indexe] = string(put1) + string(put2)
+}
+
+func FirstPonctuation(s string) bool{
+	tab:=[]rune(s)
+	//count:=0
+	if (tab[0]== ',' || tab[0]==';' || tab[0]=='!' || tab[0]=='?' || tab[0]=='.'|| tab[0]==':') && len(tab)>1{
+		for i:=1; i<len(tab); i++{
+			if tab[i]!= ',' && tab[i]!=';' && tab[i]!='.' && tab[i]!='!' && tab[i]!='?' && tab[i]!= ':'{
+				return true
+				break
+			}
+		}
+	}
+	return false
+}
+func MiddlePonctuation(S string) bool {
+	tab := []rune(S)
+	for i := 1; i < len(tab)-2; i++ {
+		if tab[i] == '.' || tab[i] == ',' || tab[i] == ';' || tab[i] == ':' || tab[i] == '!' || tab[i] == '?' {
+			return true
+			break
+		}
+	}
+	return false
 }
 
 func Ispecial(c rune) bool {
@@ -24,7 +148,6 @@ func Ispecial(c rune) bool {
 	}
 	return false
 }
-
 func Capitalize(s string) string {
 	x := []rune(s)
 	vrai := true
@@ -43,428 +166,339 @@ func Capitalize(s string) string {
 	return string(x)
 }
 
-func ToLower(s string) string {
-	a := []rune(s)
-	for i, v := range a {
-		if v >= 'A' && v <= 'Z' {
-			a[i] = a[i] + 32
-		}
-	}
-	return string(a)
-}
-
-func convertbin(b string) int {
-	nbr, _ := strconv.Atoi(b)
-	c := 1
-	var n int
-	var res int
-	for nbr != 0 {
-		n = nbr % 10
-		res = res + (n * c)
-		c = c * 2
-		nbr = nbr / 10
-	}
-	return res
-}
-
-func converthex(b string) int {
-	tab := []rune(b)
-	c := 1
-	n0 := ""
-	var n int
-	var res int
-	for i := len(tab) - 1; i >= 0; i-- {
-		if tab[i] == 'A' || tab[i] == 'a' {
-			n = 10
-		}
-		if tab[i] == 'B' || tab[i] == 'b' {
-			n = 11
-		}
-		if tab[i] == 'C' || tab[i] == 'c' {
-			n = 12
-		}
-		if tab[i] == 'D' || tab[i] == 'd' {
-			n = 13
-		}
-		if tab[i] == 'E' || tab[i] == 'e' {
-			n = 14
-		}
-		if tab[i] == 'F' || tab[i] == 'f' {
-			n = 15
-		}
-		if tab[i] >= '0' && tab[i] <= '9' {
-			n0 = string(tab[i])
-			n1, _ := strconv.Atoi(n0)
-			n = n1
-		}
-		res = res + (n * c)
-		c = c * 16
-	}
-
-	return res
-}
-
-func Indice(S string) int {
-	value := []rune{}
-	value2 := []rune(S)
-	if value2[len(value2)-1] == ' ' {
-		for i := 0; i < len(value2)-2; i++ {
-			value = append(value, value2[i])
-		}
-	} else {
-		for i := 0; i < len(value2)-1; i++ {
-			value = append(value, value2[i])
-		}
-	}
-
-	val := string(value)
-	valint, _ := strconv.Atoi(val)
-	return valint
-}
-
-func Spaces(S string) string {
-	get := []rune(S)
-	put := []rune{}
-	for i := 0; i < len(get)-1; i++ {
-		put = append(put, get[i])
-	}
-	return string(put)
-
-}
-
-func OnlyPonctuation(S string) bool {
-	tab := []rune(S)
-	if tab[len(tab)-1] == ' ' {
-		for i := 0; i < len(tab)-1; i++ {
-			if tab[i] != '.' && tab[i] != ',' && tab[i] != ';' && tab[i] != ':' && tab[i] != '!' && tab[i] != '?' {
-				return false
-				break
-			}
-		}
-	} else {
-		for i := 0; i < len(tab); i++ {
-			if tab[i] != '.' && tab[i] != ',' && tab[i] != ';' && tab[i] != ':' && tab[i] != '!' && tab[i] != '?' {
-				return false
-				break
-			}
+//Retourne true si le string est constitiuer que de ponctuations
+func UnikPontuation(s string) bool{
+	tab:=[]rune(s)
+	for _, v:= range tab{
+		if v!='.' && v!=',' && v!=';' && v!='!' && v!='?' && v!=':' {
+			return false
+			break
 		}
 	}
 	return true
 }
 
-func FirstPonctuation(S string) bool {
-	tab := []rune(S)
-	if tab[0] == '.' || tab[0] == ',' || tab[0] == ';' || tab[0] == ':' || tab[0] == '!' || tab[0] == '?' {
+//Retourne le int que se trouve a l'interieur d'un string comme "3)"
+func trier(s string) int{
+	tab:=[]rune(s)
+	tab2:=[]rune{}
+
+	for i:=0; i<len(tab)-1;i++{
+		tab2=append(tab2, tab[i])
+	}
+	str:=string(tab2)
+	entier, _:=strconv.Atoi(str)
+
+	return entier
+}
+func parenthese(s string) bool {
+	t:=[]rune(s)
+	if t[len(t)-1]==')'{
+		return true
+	}else{
+		return false
+	}
+}
+
+func Stringtab(t []string) string{
+	world:=""
+	for _, v := range t {
+		if world==""{
+			world+=v
+		}else{
+			world=world+" "+v
+		}
+	}
+	return world
+}
+func supprime2(t []string, ind int) []string{
+
+	tab:=[]string{}
+	for i:=0; i<len(t); i++ {
+		if i!=ind {
+			tab=append(tab, t[i])
+		}
+	}
+	return tab
+}
+func supprime3(t []string, ind int) []string{
+
+	tab:=[]string{}
+	for i:=0; i<len(t); i++ {
+		if i!=ind && i!=ind+1{
+			tab=append(tab, t[i])
+		}
+	}
+	return tab
+}
+
+func sup(t2 []string) []string{
+	t:=[]string{}
+	for i:=0; i<len(t2); i++{
+		if t2[i] == "(cap)" || t2[i] == "(up)" || t2[i] == "(low)" || t2[i] == "(hex)" || t2[i] == "(bin)" {
+			continue
+		}else if t2[i] == "(cap," && len(t2)>1 && isNumb(t2[i+1]) && parenthese(t2[i+1]) || t2[i] == "(up," && len(t2)>1 && isNumb(t2[i+1]) && parenthese(t2[i+1])  || t2[i] == "(low," && len(t2)>1 && isNumb(t2[i+1]) && parenthese(t2[i+1]) || t2[i] == "(hex," && len(t2)>1 && isNumb(t2[i+1]) && parenthese(t2[i+1]) || t2[i] == "(bin," && len(t2)>1 && isNumb(t2[i+1]) && parenthese(t2[i+1])  {
+			i+=1
+			continue
+		} else{
+			t=append(t, t2[i])
+		}
+
+	}
+	return t
+}
+func correct(t []string) []string{
+	str:=Stringtab(t)
+	Sortie:=[]rune(str)
+	PutFinal := []rune{}
+	for i := 0; i < len(Sortie); i++ {
+		if i-1==0 && Sortie[i] == ' ' && (Sortie[i-1] == 'a' || Sortie[i-1] == 'A') && (Sortie[i+1] == 'a' || Sortie[i+1] == 'e' || Sortie[i+1] == 'i' || Sortie[i+1] == 'o' || Sortie[i+1] == 'u' || Sortie[i+1] == 'h' || Sortie[i+1] == 'A' || Sortie[i+1] == 'E' || Sortie[i+1] == 'I' || Sortie[i+1] == 'O' || Sortie[i+1] == 'U' || Sortie[i+1] == 'H') {
+			PutFinal = append(PutFinal, 'n')
+		}
+
+		if i >2  && Sortie[i] == ' ' && (Sortie[i-1] == 'a' || Sortie[i-1] == 'A') && (Sortie[i+1] == 'a' || Sortie[i+1] == 'e' || Sortie[i+1] == 'i' || Sortie[i+1] == 'o' || Sortie[i+1] == 'u' || Sortie[i+1] == 'h' || Sortie[i+1] == 'A' || Sortie[i+1] == 'E' || Sortie[i+1] == 'I' || Sortie[i+1] == 'O' || Sortie[i+1] == 'U' || Sortie[i+1] == 'H') && (Sortie[i-2] == ' ') {
+			PutFinal = append(PutFinal, 'n')
+		}
+		PutFinal = append(PutFinal, Sortie[i])
+	}
+
+	return strings.Split(string(PutFinal), " ")
+}
+
+func Apposs(s []string) string {
+	s2 := ""
+	count := false
+	for i := 0; i < len(s); i++ {
+		if s[i] == "'" && !(count) {
+			s2 += s[i]
+			count = true
+		} else if s[i] == "'" && (count) {
+			s2 += s[i] + " "
+			count = false
+		} else {
+			if i < len(s)-1 && s[i+1] != "'"  {
+				s2 += s[i] + " "
+			} else if i < len(s)-1 && s[i+1] == "'" && !count {
+				s2 += s[i] + " "
+			} else {
+				s2 += s[i]
+			}
+		}
+	}
+	return s2
+}
+
+func instruction1(s string) bool{
+	if s=="(cap)" || s=="(up)" || s=="(low)" || s=="(hex)" || s=="(bin)" {
 		return true
 	}
 	return false
 }
 
-func MiddlePonctuation(S string) bool {
-	tab := []rune(S)
-	for i := 1; i < len(tab)-2; i++ {
-		if tab[i] == '.' || tab[i] == ',' || tab[i] == ';' || tab[i] == ':' || tab[i] == '!' || tab[i] == '?' {
-			return true
-			break
-		}
+func instruction2(s string) bool{
+	if s=="(cap," || s=="(up," || s=="(low," || s=="(hex," || s=="(bin," {
+		return true
 	}
 	return false
 }
-
-func Ponctuat1(S string, indexe int, result []string) {
-	get := []rune(S)
-	put := []rune{}
-	if get[len(get)-1] == ' ' {
-		for i := 0; i < len(get)-1; i++ {
-			put = append(put, get[i])
-		}
-	} else {
-		for i := 0; i < len(get); i++ {
-			put = append(put, get[i])
-		}
-	}
-
-	result[indexe] = " "
-	temp := []rune(result[indexe-1])
-	put2 := []rune{}
-	for i := 0; i < len(temp)-1; i++ {
-		put2 = append(put2, temp[i])
-	}
-	result[indexe-1] = string(put2) + string(put)
-}
-
-func Ponctuat2(S string, indexe int, result []string) {
-	get := []rune(S)
-	put := []rune{}
-	put3 := []rune{}
-	c := 0
-	for i := 0; i < len(get); i++ {
-		if get[i] == '.' || get[i] == ',' || get[i] == ';' || get[i] == ':' || get[i] == '!' || get[i] == '?' {
-			put = append(put, get[i])
-			c++
-		} else {
+func isNumb(s string) bool {
+	tab:=[]rune(s)
+	tab1:=tab[:len(tab)-1]
+	for _, v:=range tab1{
+		if v<'0' || v > '9'{
+			return false
 			break
 		}
 	}
-	for j := c; j < len(get); j++ {
-		put3 = append(put3, get[j])
-	}
-	result[indexe] = string(put3)
-	temp := []rune(result[indexe-1])
-	put2 := []rune{}
-	for i := 0; i < len(temp)-1; i++ {
-		put2 = append(put2, temp[i])
-	}
-	result[indexe-1] = string(put2) + string(put) + " "
+	return true
 }
-
-func Ponctuat3(S string, indexe int, result []string) {
-	get := []rune(S)
-	put1 := []rune{}
-	put2 := []rune{}
-	c := 0
-	for i := 0; i < len(get)-1; i++ {
-		put1 = append(put1, get[i])
-		c++
-		if get[i] == '.' || get[i] == ',' || get[i] == ';' || get[i] == ':' || get[i] == '!' || get[i] == '?' {
-
-			if get[i+1] == '.' || get[i+1] == ',' || get[i+1] == ';' || get[i+1] == ':' || get[i+1] == '!' || get[i+1] == '?' {
-				continue
-			} else {
-				break
-			}
+func uniksapce(s string) bool {
+	tab:=[]rune(s)
+	for _, v:= range tab{
+		if v!=' ' && v!='\n' && v!='\t'{
+			return false
+			break
 		}
 	}
-	for j := c; j < len(get)-1; j++ {
-		put2 = append(put2, get[j])
-	}
-	result[indexe] = string(put1) + " " + string(put2) + " "
+	return true
 }
 
-func Apposs(s string) string {
-
-	s2 := ""
-
-	cp := false
-	for i := 0; i < len(s); i++ {
-
-		if s[i] == 39 && i < len(s)-1 && !cp {
-			s2 += string(s[i])
-			if s[i+1] == ' ' {
-				i += 2
-			}
-
-			cp = true
-		}
-		if s[i] == ' ' && i < len(s)-1 && cp && s[i+1] == 39 {
-			i++
-			cp = false
-		} else if s[i] == 39 && i < len(s)-1 && cp {
-			cp = false
-		}
-		s2 += string(s[i])
-
-	}
-
-	return s2
-}
-
-func supprime(t string)string{
-	t2:=strings.Split(t, " ")
-	clean:=""
-	for i:=0; i<len(t2); i++{
-		if t2[i]=="(cap)" || t2[i]=="(up)" || t2[i]=="(low)" || t2[i]=="(hex)" || t2[i]=="(bin)" {
-			continue
-		}else{
-			if i!=len(t2)-2 && (t2[len(t2)-1]!="(cap)" || t2[len(t2)-1]!="(up)" || t2[len(t2)-1]!="(bin)" ||t2[len(t2)-1]!="(low)" ||t2[len(t2)-1]!="(hex)" ){
-				clean+=t2[i]+" "
-			}else{
-				clean+=t2[i]
-			}
-		}
-	}
-	return clean
-}
 func main() {
-	file := os.Args[1]
-	data, err := ioutil.ReadFile(file)
-	if err != nil {
-		fmt.Println(err)
+	//Recuperer le contenue du fichier en byte dans un variable
+	txt ,er:=ioutil.ReadFile(os.Args[1])
+	if er != nil{
+		fmt.Println("le fichier rencontre des erreurs")
 	}
-	output := string(data)
-	out := []rune(output)
-	in := []rune{}
-	for i := 0; i < len(out); i++ {
-		if i != 0 && out[i] == '(' && out[i-1] != ' ' {
-			in = append(in, ' ')
-		}
-		if i != 0 && out[i] != ' ' && out[i-1] == ')' {
-			in = append(in, ' ')
-		}
-		in = append(in, out[i])
-		// if out[len(out)-1] == ')' {
-		// 	in = append(in, ' ')
-		// }
-	}
-	tabstring := []string{}
-	word := []rune{}
+	conv:=string(txt)
+	if !(uniksapce(conv)){
+//	conv:=double(conv1)
 
-	for i := 0; i < len(in); i++ {
-		word = append(word, in[i])
-		if in[i] == ' ' || i == len(in)-1 {
-			word1 := string(word)
-			tabstring = append(tabstring, word1)
-			word1 = ""
-			word = nil
-		}
+	tabString := strings.Split(conv, " ")
+	tabString=correct(tabString)
+	if (len(tabString)==1 && instruction1(tabString[0])){
+		tabString=nil
 	}
-	result := tabstring
-	for i := 0; i < len(result); i++ {
-		if i>0{
-		if result[i] == "(cap) " || result[i] == "(cap)" {
-			result[i-1] = Capitalize(result[i-1])
-			
+	if (len(tabString)==2 && instruction2(tabString[0]) && isNumb(tabString[1]) && parenthese(tabString[1])){
+		tabString=nil
+	}
+	// tabString=firsrinstance(tabString)
+	for i:=0; i<len(tabString); i++{
+		if i==0 && instruction1(tabString[i]){
+			tabString=supprime2(tabString, i)
 		}
-		if result[i] == "(up) " || result[i] == "(up)" {
-			result[i-1] = ToUpper(result[i-1])
+		if i > 0 && tabString[i]=="(bin)"{
+			entier, _:=strconv.ParseInt(tabString[i-1], 2, 64)
+			entier2:=strconv.FormatInt(entier, 10)
+			if entier2=="0"{
+				tabString[i-1]=tabString[i-1]
+			}else{
+			tabString[i-1]=entier2
+			}
+			tabString=supprime2(tabString, i)
+			i-=1
 		}
-		if result[i] == "(low) " || result[i] == "(low)" {
-			result[i-1] = ToLower(result[i-1])
+		if i > 0 && tabString[i]=="(hex)"{
+			entier, _:=strconv.ParseInt(tabString[i-1], 16, 64)
+			entier2:=strconv.FormatInt(entier, 10)
+			if entier2=="0"{
+				tabString[i-1]=tabString[i-1]
+			}else{
+			tabString[i-1]=entier2
+			}
+			tabString=supprime2(tabString, i)
+			i-=1
 		}
-		if result[i] == "(hex) " || result[i] == "(hex)" {
-			result[i-1] = strconv.Itoa(converthex(Spaces(result[i-1]))) + " "
+		if i > 0 && tabString[i]=="(up)"{
+			tabString[i-1]=strings.ToUpper(tabString[i-1])
+			tabString=supprime2(tabString, i)
+			i-=1
 		}
-		if result[i] == "(bin) " || result[i] == "(bin)" {
-			result[i-1] = strconv.Itoa(convertbin(Spaces(result[i-1]))) + " "
+		if i > 0 && tabString[i]=="(cap)"{
+			tabString[i-1]=Capitalize(tabString[i-1])
+			tabString=supprime2(tabString, i)
+			i-=1
 		}
-		if result[i] == "(cap, " {
-			temp := Indice(result[i+1])
-			for j := i - 1; j >= i-temp; j-- {
-				result[j] = Capitalize(result[j])
+		if i > 0 && tabString[i]=="(low)"{
+			tabString[i-1]=strings.ToLower(tabString[i-1])
+			tabString=supprime2(tabString, i)
+			i-=1
+		}
+		if i>0 && tabString[i]=="(cap," && isNumb(tabString[i+1]) && parenthese(tabString[i+1]){
+			limit:=trier(tabString[i+1])
+			for j:=i-1; j>i-limit-1; j--{
+				if j<0{
+					break
+				}
+				tabString[j]=Capitalize(tabString[j])
+			}
+			tabString=supprime3(tabString, i)
+			i-=2
+		}
+		if i > 0 && tabString[i]=="(up," && isNumb(tabString[i+1]) && parenthese(tabString[i+1]){
+			limit:=trier(tabString[i+1])
+			for j:=i-1; j>i-limit-1; j--{
+				if j<0{
+					break
+				}
+				tabString[j]=strings.ToUpper(tabString[j])
+			}
+			tabString=supprime3(tabString, i)
+			i-=2
+		}
+		if i > 0 && tabString[i]=="(low," && isNumb(tabString[i+1]) && parenthese(tabString[i+1]){
+			limit:=trier(tabString[i+1])
+			for j:=i-1; j>i-limit-1; j--{
+				if j<0{
+					break
+				}
+				tabString[j]=strings.ToLower(tabString[j])
+			}
+			tabString=supprime3(tabString, i)
+			i-=2
+		}
+		if i > 0 && tabString[i]=="(hex," && isNumb(tabString[i+1]) && parenthese(tabString[i+1]){
+			limit:=trier(tabString[i+1])
+			for j:=i-1; j>i-limit-1; j--{
+				if j<0{
+					break
+				}
+				entier, _:=strconv.ParseInt(tabString[j], 16, 64)
+				entier2:=strconv.FormatInt(entier, 10)
+				tabString[j]=entier2
+			}
+			tabString=supprime3(tabString, i)
+			i-=2
+		}
+		if i > 0 && tabString[i]=="(bin," && isNumb(tabString[i+1]) && parenthese(tabString[i+1]){
+			limit:=trier(tabString[i+1])
+			for j:=i-1; j>i-limit-1; j--{
+				if j<0{
+					break
+				}
+				entier, _:=strconv.ParseInt(tabString[j], 2, 64)
+				entier2:=strconv.FormatInt(entier, 10)
+				tabString[j]=entier2
+			}
+			tabString=supprime3(tabString, i)
+			i-=2
+		}
+		if i > 0 && UnikPontuation(tabString[i]){
+			tabString[i-1]=tabString[i-1]+tabString[i]
+			tabString=supprime2(tabString, i)
+			i-=1
+		}else{
+			if i > 0 && MiddlePonctuation(tabString[i]) {
+				Ponctuat3(tabString[i], i, tabString)
+			}
+			if i > 0 && FirstPonctuation(tabString[i]){
+				SeparePonctuation(tabString[i], i, tabString)
 			}
 		}
-		if result[i] == "(up, " {
-			temp := Indice(result[i+1])
-			for j := i - 1; j >= i-temp; j-- {
-				result[j] = ToUpper(result[j])
-			}
-		}
-		if result[i] == "(low, " {
-			temp := Indice(result[i+1])
-			for j := i - 1; j >= i-temp; j-- {
-				result[j] = ToLower(result[j])
-			}
-		}
-		if result[i] == "(hex, " {
-			temp := Indice(result[i+1])
-			for j := i - 1; j >= i-temp; j-- {
-				result[j] = strconv.Itoa(converthex(Spaces(result[j])))
-			}
-		}
-		if result[i] == "(bin, " {
-			temp := Indice(result[i+1])
-			for j := i - 1; j >= i-temp; j-- {
-				result[j] = strconv.Itoa(convertbin(Spaces(result[j])))
-			}
-		}
-	}
-		if OnlyPonctuation(result[i]) {
-			Ponctuat1(result[i], i, result)
-		}
-		if FirstPonctuation(result[i]) {
-			Ponctuat2(result[i], i, result)
-		}
-		if MiddlePonctuation(result[i]) {
-			Ponctuat3(result[i], i, result)
-		}
-	}
+		
+	 }
+	
+	tabString=correct(tabString)
+	tabString=strings.Split(spaceapoint(Stringtab(tabString)), " ")
+  	tabString=strings.Split(spaceaposs(Stringtab(tabString)), " ")
+	tabString=strings.Split(Apposs(tabString), " ")
+	tabString=sup(tabString)
+	phrase:=Stringtab(tabString)
+	phrase1:=supspace(phrase)
 
-	Semifinal := ""
-	for i := 0; i < len(result); i++ {
-		Semifinal += result[i]
-	}
-	RuneFinal := []rune(Semifinal)
-	PutFinal := []rune{}
-	for i := 0; i < len(RuneFinal); i++ {
-		if RuneFinal[i] == ' ' && (RuneFinal[i-1] == 'a' || RuneFinal[i-1] == 'A') && (RuneFinal[i+1] == 'a' || RuneFinal[i+1] == 'e' || RuneFinal[i+1] == 'i' || RuneFinal[i+1] == 'o' || RuneFinal[i+1] == 'u' || RuneFinal[i+1] == 'h' || RuneFinal[i+1] == 'A' || RuneFinal[i+1] == 'E' || RuneFinal[i+1] == 'I' || RuneFinal[i+1] == 'O' || RuneFinal[i+1] == 'U' || RuneFinal[i+1] == 'H') && (RuneFinal[i-2] == ' ') {
-			PutFinal = append(PutFinal, 'n')
-		}
-		PutFinal = append(PutFinal, RuneFinal[i])
-	}
-
-	final := ""
-	for i := 0; i < len(PutFinal); i++ {
-		final += string(PutFinal[i])
-	}
-	final2:=supprime(final)
-	out1 := []rune(final2)
-	tabstring1 := []string{}
-	worl2 := []rune{}
-	for i := 0; i < len(out1); i++ {
-		worl2 = append(worl2, out1[i])
-		if out1[i] == ' ' || i == len(out1)-1 {
-			worl3 := string(worl2)
-			tabstring1 = append(tabstring1, worl3)
-			worl3 = ""
-			worl2 = nil
-		}
-	}
-	for i := 0; i < len(tabstring1); i++ {
-		if OnlyPonctuation(tabstring1[i]) {
-			Ponctuat1(tabstring1[i], i, tabstring1)
-		}
-		if FirstPonctuation(tabstring1[i]) {
-			Ponctuat2(tabstring1[i], i, tabstring1)
-		}
-		if MiddlePonctuation(tabstring1[i]) {
-			Ponctuat3(tabstring1[i], i, tabstring1)
-		}
-
-	}
-	finalement := ""
-	for i := 0; i < len(tabstring1); i++ {
-		finalement += string(tabstring1[i])
-	}
-	fmt.Println(finalement)
-	fin:=supprime(finalement)
-	// RuneFinaly := []rune(finalement)
-	// Finaly := []rune{}
-	// for i := 0; i < len(RuneFinaly); i++ {
-	// 	// for RuneFinaly[i] == '(' {
-	// 	// 	for RuneFinaly[i] != ')' {
-	// 	// 		i += 1
-	// 	// 	}
-	// 	// 	if RuneFinaly[i] == ')' {
-	// 	// 		i += 2
-	// 	// 	}
-	// 	// }
-	// 	Finaly = append(Finaly, RuneFinaly[i])
-	// }
-	// fin := ""
-	// for i := 0; i < len(Finaly); i++ {
-	// 	fin += string(Finaly[i])
-	// }
-
-	// Ouverture du fichier en mode écriture
+	// fmt.Println(string(corrected))
 	correct, err := os.Create(os.Args[2])
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-
-	// Écriture de texte dans le fichier
-	_, err = correct.WriteString(Apposs(fin))
+	_, err = correct.WriteString(string(phrase1))
 	if err != nil {
 		fmt.Println(err)
 		correct.Close()
 		return
 	}
-
-	// Fermeture du fichier
 	err = correct.Close()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+}else{
+	correct, err := os.Create(os.Args[2])
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	_, err = correct.WriteString(conv)
+	if err != nil {
+		fmt.Println(err)
+		correct.Close()
+		return
+	}
+	err = correct.Close()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
 
 }
